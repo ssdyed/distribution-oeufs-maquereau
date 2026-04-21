@@ -2,7 +2,7 @@
 
 # Chargement des données
 library(readr)
-maquereau = read_csv("maquereau.csv")
+maquereau = read_csv("maquereau.csv")     # téléchargez le fichier et entrez le chemin de votre ordinateur         
 
 # Structure des données
 dim(maquereau)                  # dimension de notre matrice de données
@@ -111,21 +111,21 @@ vif(modele_step)
 
 
 # Modèle 2 : modèle complet sans lat
-modele_v2 = lm(log_egg ~ log_bdepth + lon + time + s.depth +
+modele_2 = lm(log_egg ~ log_bdepth + lon + time + s.depth +
                   temp.surf + net.area + c.dist, data = maquereau)
-summary(modele_v2)
-vif(modele_v2)
+summary(modele_2)
+vif(modele_2)
 
 
 # Modèle 3 : modèle complet sans net.area
-modele_v3 = lm(log_egg ~ log_bdepth + lat + lon + time + 
+modele_3 = lm(log_egg ~ log_bdepth + lat + lon + time + 
                   s.depth + temp.surf + c.dist, data = maquereau)
-summary(modele_v3)
-vif(modele_v3)
+summary(modele_3)
+vif(modele_3)
 
 
 # Modèle 4 : modèle 3 sans lon et time
-modele_4 <- lm(log_egg ~ log_bdepth + lat + s.depth + 
+modele_4 = lm(log_egg ~ log_bdepth + lat + s.depth + 
                  temp.surf + c.dist, data = maquereau)
 summary(modele_4)
 vif(modele_4)
@@ -151,16 +151,13 @@ modele_final = modele_6
 
 # PARTIE 5 : VALIDATION DU MODÈLE
 
-#Graphique Q-Q et graphique Résidues Vs valeur prédite
-par(mfrow=c(1,2))
-
-plot(modele_6, which = 2)
-plot(modele_6, which = 1)
-
+#Graphique des résidus
+par(mfrow=c(2,2))
+plot(modele_final)
 par(mfrow=c(1,1))
 
 #Distance cook : 
-distances_cook <- cooks.distance(modele_6)
+distances_cook = cooks.distance(modele_final)
 seuil_relatif = 4 /nrow(maquereau)                         # seuil = 4/n
 seuil_absolu = 1                                           # par définition
 
@@ -170,17 +167,11 @@ plot(distances_cook, type = "h",
 abline(h = seuil_relatif, col = "red")
 abline(h = seuil_absolu, col = "blue")                  
 # Le seuil absolu n'est pas visible sur le graphique, car on est très loin de 1 (max = 0.04)
-# Ce qui confirme qu'on a aucune valeur influente extrême.
+# Ce qui confirme qu'on a aucune valeur influente extrême dans nos données.
 
 # Vérification des points influents
 points_influents = which(distances_cook > 1)
 points_influents                                         # 0 points influents
-
-
-
-
-
-
 
 
 
